@@ -1,12 +1,10 @@
 <template>
-  <div class="container">
-    <h1>{{ this.title }}</h1>
-    <body id="content">
+  <div class="flex flex-col items-center">
+    <h1 class="text-5xl font-medium">{{ this.title }}</h1>
+    <Button :onClick="handlePropose">Proposer une modification</Button>
+    <div id="content">
 
-    </body>
-    <button v-on:click="handlePropose">
-      Proposer une modification
-    </button>
+    </div>
   </div>
 </template>
 
@@ -14,11 +12,16 @@
 import Vue from 'vue'
 import {mapMutations} from 'vuex'
 
-export default Vue.extend({
+import Button from "../components/Button.vue";
+
+export default {
   data() {
     return {
       title: 'Comment faire pousser des carottes ?'
     }
+  },
+  components: {
+    Button
   },
   methods: {
     addTodo() {
@@ -39,12 +42,5 @@ export default Vue.extend({
       })
     }
   }
-})
-</script>
-
-<style>
-.container {
-  display: flex;
-  justify-content: center;
 }
-</style>
+</script>
