@@ -55,6 +55,8 @@
 <script>
 import marked from 'marked'
 import Button from "../components/Button.vue";
+import axios from 'axios'
+
 let Header, List, CodeTool, Paragraph, Embed, Table, Checklist, Marker, Warning, RawTool, Quote, InlineCode, Delimiter, SimpleImage, ImageTool
 if (process.client)
 {
@@ -154,9 +156,33 @@ export default {
             class: ImageTool,
             config: {
               endpoints: {
-                byFile: 'http://localhost:3000/images', // Your backend file uploader endpoint
-                byUrl: 'http://localhost:3000/images', // Your endpoint that provides uploading by Url
-              }
+                byFile: 'http://localhost:8080/images', // Your backend file uploader endpoint
+                // byUrl: 'http://localhost:8080/images', // Your endpoint that provides uploading by Url
+              },
+              additionalRequestHeaders: {
+                'Access-Control-Allow-Origin':'*',
+              },
+              field: 'image',
+              types: 'image/*',
+              uploader: {
+                async uploadByFile(file) {
+                  console.log(file)
+                  try {
+                    const result = await fetch('http://localhost:8080/images', {
+                      method: 'POST',
+                      headers: new Headers(),
+                      mode: 'cors',
+                      cache: 'default',
+                      body: JSON.stringify({
+                        file
+                      })
+                    })
+                    console.log(result)
+                  } catch (err) {
+                    console.log(err)
+                  }
+                }
+              },
             }
           },
         },
@@ -258,7 +284,7 @@ export default {
               "type" : "image",
               "data" : {
                 "file" : {
-                  "url" : "https://images.wallpapersden.com/image/download/kame-house-dragon-ball-z_a2llbmaUmZqaraWkpJRoZWhnrWZsZWs.jpg"
+                  "url" : "https://picsum.photos/200/300"
                 },
                 "caption" : "",
                 "withBorder" : false,
@@ -268,7 +294,8 @@ export default {
             },
           ],
           "version" : "2.18.0"
-        }
+        },
+
       }
     }
   },
@@ -287,6 +314,15 @@ export default {
     Button
   },
   methods: {
+    async uploadImage() {
+      try {
+        const result = await axios.$post('http://localhost:8080/images', {
+          file: file
+        })
+      } catch (err) {
+        console.log(err)
+      }
+    },
     onInitialized (editor) {
       console.log(editor)
     }
